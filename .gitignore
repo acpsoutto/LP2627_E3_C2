@@ -6,3 +6,4 @@ target/
 hibernate.cfg.xml
 bin/
 *.class
+application.properties
