@@ -1,6 +1,6 @@
 .metadata/
-.setting/
-.classpath/
+.settings/
+.classpath
 .project
 target/
 hibernate.cfg.xml
