@@ -10,9 +10,13 @@ import java.util.List;
 @Service
 public class MensagemService{
 	private final MensagemRepository mensagemRepository;
+	private final ChatRepository chatRepository;
+	private final UtilizadorRepository utilizadorRepository;
 
-	public MensagemService(MensagemRepository mensagemRepository) {
+	public MensagemService(MensagemRepository mensagemRepository,ChatRepository chatRepository,UtilizadorRepository utilizadorRepository) {
 		this.mensagemRepository = mensagemRepository;
+		this.chatRepository = chatRepository;
+		this.utilizadorRepository = utilizadorRepository;
 	}
 	
 	 public List<Mensagem> getAllMensagens() { 
@@ -26,15 +30,39 @@ public class MensagemService{
 	    } 
 	 
 	    public Mensagem createMensagem(Mensagem m) { 
+	    	 if (m.getChat() == null 
+		                || m.getChat().getId() == null) { 
+		            throw new ResponseStatusException( 
+		                HttpStatus.BAD_REQUEST, 
+		                "A Chat identifier is required"); 
+		        } 
+	    	 if (m.getEmissor() == null 
+		                || m.getEmissor().getId() == null) { 
+		            throw new ResponseStatusException( 
+		                HttpStatus.BAD_REQUEST, 
+		                "A emissor identifier is required"); 
+		        } 
+	    	 Utilizdor emissor = utilizadorRepository 
+	 	            .findById(m.getEmissor().getId()) 
+	 	            .orElseThrow(() -> new ResponseStatusException( 
+	 	                HttpStatus.NOT_FOUND, "Utilizador not found"));
+	    	 
+	    	 Chat chat = chatRepository 
+		 	            .findById(m.getChat().getId()) 
+		 	            .orElseThrow(() -> new ResponseStatusException( 
+		 	                HttpStatus.NOT_FOUND, "Chat not found"));
+	    	 
+	    	 
 	    	Mensagem mensagem = new Mensagem();
 	    	 mensagem.setTexto(m.getTexto());
-	    	 mensagem.setChat(m.getChat());
-	    	 mensagem.setEmissor(m.getEmissor());
 	    	 mensagem.setHora(m.getHora());
+	    	 mensagem.setEmissor(emissor);
+	    	 mensagem.setChat(chat);
 	    	 
 	    	 return mensagemRepository.save(mensagem);
 
 	    } 
+
 	 
 	public Mensagem updateMensagem(Long id, Mensagem m) { 
 	      Mensagem existing = mensagemRepository.findById(id) 
