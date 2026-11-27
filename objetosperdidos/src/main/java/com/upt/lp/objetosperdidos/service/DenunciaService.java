@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.upt.lp.objetosperdidos.dto.CriarDenunciaDTO;
+import com.upt.lp.objetosperdidos.dto.DenunciaDTO;
 import com.upt.lp.objetosperdidos.entity.Chat;
 import com.upt.lp.objetosperdidos.entity.Denuncia;
 import com.upt.lp.objetosperdidos.entity.Estado;
@@ -55,12 +57,18 @@ public class DenunciaService {
         return denunciaRepository.save(denuncia);
     }
 
-    public List<Denuncia> listarTodas() {
-        return denunciaRepository.findAll();
+    @Transactional
+    public DenunciaDTO criarDenuncia(CriarDenunciaDTO dto) {
+    	Denuncia guardada = criarDenuncia(dto.idDenunciante(), dto.idDenunciado(), dto.idChat());
+    	return DenunciaDTO.fromEntity(guardada);
+    }
+    
+    public List<DenunciaDTO> listarTodas() {
+        return denunciaRepository.findAll().stream().map(DenunciaDTO::fromEntity).toList();
     }
 
-    public List<Denuncia> listarPendentes() {
-        return denunciaRepository.findByEstado(Estado.PENDENTE);
+    public List<DenunciaDTO> listarPendentes() {
+        return denunciaRepository.findByEstado(Estado.PENDENTE).stream().map(DenunciaDTO::fromEntity).toList();
     }
 
     public List<Chat> listarChatsDenunciadosPendentes() {
@@ -95,6 +103,12 @@ public class DenunciaService {
         }
 
         return guardada;
+    }
+    
+    @Transactional
+    public DenunciaDTO resolverDenunciaDTO(int idDenuncia, int opcao) {
+    	Denuncia guardada = resolverDenuncia(idDenuncia, opcao);
+    	return DenunciaDTO.fromEntity(guardada);
     }
 
     @Transactional

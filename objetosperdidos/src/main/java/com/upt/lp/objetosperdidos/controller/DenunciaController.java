@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.upt.lp.objetosperdidos.dto.CriarDenunciaDTO;
+import com.upt.lp.objetosperdidos.dto.DenunciaDTO;
 import com.upt.lp.objetosperdidos.entity.Chat;
 import com.upt.lp.objetosperdidos.entity.Denuncia;
 import com.upt.lp.objetosperdidos.entity.Utilizador;
@@ -38,22 +40,18 @@ public class DenunciaController {
     }
 
     @PostMapping
-    public ResponseEntity<Denuncia> criarDenuncia(@Valid @RequestBody CriarDenunciaRequest request) {
-        Denuncia criada = denunciaService.criarDenuncia(
-                request.idDenunciante(),
-                request.idDenunciado(),
-                request.idChat()
-        );
+    public ResponseEntity<DenunciaDTO> criarDenuncia(@Valid @RequestBody CriarDenunciaDTO dto) {
+        DenunciaDTO criada = denunciaService.criarDenuncia(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criada);
     }
 
     @GetMapping
-    public ResponseEntity<List<Denuncia>> listarDenuncias() {
+    public ResponseEntity<List<DenunciaDTO>> listarDenuncias() {
         return ResponseEntity.ok(denunciaService.listarTodas());
     }
 
     @GetMapping("/pendentes")
-    public ResponseEntity<List<Denuncia>> listarPendentes() {
+    public ResponseEntity<List<DenunciaDTO>> listarPendentes() {
         return ResponseEntity.ok(denunciaService.listarPendentes());
     }
 
@@ -63,10 +61,10 @@ public class DenunciaController {
     }
 
     @PatchMapping("/{idDenuncia}/resolver")
-    public ResponseEntity<Denuncia> resolverDenuncia(
+    public ResponseEntity<DenunciaDTO> resolverDenuncia(
             @PathVariable int idDenuncia,
             @RequestParam int opcao) {
-        Denuncia resolvida = denunciaService.resolverDenuncia(idDenuncia, opcao);
+        DenunciaDTO resolvida = denunciaService.resolverDenunciaDTO(idDenuncia, opcao);
         return ResponseEntity.ok(resolvida);
     }
 
