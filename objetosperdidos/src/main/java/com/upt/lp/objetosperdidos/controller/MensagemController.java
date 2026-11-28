@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List; 
  
 @RestController 
-@RequestMapping("/api/courses") 
+@RequestMapping("/api/mensagens") 
 public class MensagemController { 
  
     private final MensagemService mensagemService; 
@@ -30,7 +30,7 @@ public class MensagemController {
     @PostMapping
 	 public ResponseEntity<Mensagem> create(@RequestBody Mensagem m) {
 		Mensagem created = mensagemService.createMensagem(m);
-		URI location = URI.create("/api/departments/" + created.getIdMensagem());
+		URI location = URI.create("/api/mensagens/" + created.getIdMensagem());
 		return ResponseEntity.created(location).body(created);
 	 }
  
