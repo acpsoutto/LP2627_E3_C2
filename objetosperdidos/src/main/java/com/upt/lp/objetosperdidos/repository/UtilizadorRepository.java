@@ -10,5 +10,8 @@ import com.upt.lp.objetosperdidos.entity.Utilizador;
 public interface UtilizadorRepository extends JpaRepository<Utilizador, Integer> {
 
     Optional<Utilizador> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
     long countByTipo(TipoUtilizador tipo);
 }
