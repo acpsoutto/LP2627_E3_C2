@@ -2,10 +2,15 @@ package com.upt.lp.objetosperdidos.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.upt.lp.objetosperdidos.dto.UtilizadorAtualizacaoDTO;
 import com.upt.lp.objetosperdidos.dto.UtilizadorDTO;
+import com.upt.lp.objetosperdidos.dto.UtilizadorLoginDTO;
+import com.upt.lp.objetosperdidos.dto.UtilizadorRegistoDTO;
 import com.upt.lp.objetosperdidos.entity.Utilizador;
 import com.upt.lp.objetosperdidos.mapper.UtilizadorMapper;
 import com.upt.lp.objetosperdidos.service.UtilizadorService;
@@ -27,27 +32,29 @@ public class UtilizadorController {
                 .map(UtilizadorMapper::toDTO)
                 .toList();
     }
-    
+
     @GetMapping("/{id}")
     public UtilizadorDTO getById(@PathVariable Integer id) {
         return UtilizadorMapper.toDTO(utilizadorService.getUtilizador(id));
     }
-    
+
     @PostMapping
-    public ResponseEntity<Utilizador> registrar(@RequestBody Utilizador utilizador) {
-        Utilizador created = utilizadorService.registrar(utilizador);
-        URI location = URI.create("/api/utilizadores/" + created.getIdUtilizador());
-        return ResponseEntity.created(location).body(created);
+    public ResponseEntity<UtilizadorDTO> registrar(@RequestBody UtilizadorRegistoDTO dados) {
+        Utilizador criado = utilizadorService.registrar(dados);
+        URI location = URI.create("/api/utilizadores/" + criado.getIdUtilizador());
+        return ResponseEntity.created(location).body(UtilizadorMapper.toDTO(criado));
     }
 
     @PostMapping("/login")
-    public Utilizador login(@RequestBody Map<String, String> credenciais) {
-        return utilizadorService.autenticar(credenciais.get("email"), credenciais.get("password"));
+    public UtilizadorDTO login(@RequestBody UtilizadorLoginDTO credenciais) {
+        return UtilizadorMapper.toDTO(
+                utilizadorService.autenticar(credenciais.email(), credenciais.password()));
     }
 
     @PutMapping("/{id}")
-    public Utilizador atualizar(@PathVariable Integer id, @RequestBody Utilizador dados) {
-        return utilizadorService.atualizarDadosPessoais(id, dados);
+    public UtilizadorDTO atualizar(@PathVariable Integer id,
+                                   @RequestBody UtilizadorAtualizacaoDTO dados) {
+        return UtilizadorMapper.toDTO(utilizadorService.atualizarDadosPessoais(id, dados));
     }
 
     @DeleteMapping("/{id}")
